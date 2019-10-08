@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import firebase, { auth, provider } from './firebase.js';
+import firebase from './firebase.js';
 
 class App extends Component {
 
@@ -9,13 +9,10 @@ class App extends Component {
     this.state = {
       currentItem: '',
       username: '',
-      items: [],
-      user: null // <-- add this line
+      items: []
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this); 
-    this.login = this.login.bind(this);
-    this.logout = this.logout.bind(this);
     //binds functions to constructor 
   }
 
@@ -24,25 +21,6 @@ class App extends Component {
     this.setState({
       [e.target.name]: e.target.value
     });
-  }
-
-  login() {
-    auth.signInWithPopup(provider) 
-      .then((result) => {
-        const user = result.user;
-        this.setState({
-          user
-        });
-      });
-  }
-
-  logout() {
-    auth.signOut()
-      .then(() => {
-        this.setState({
-          user: null
-        });
-      });
   }
 
   // triggered by onSubmit and pushes updated state to the database
@@ -80,14 +58,7 @@ class App extends Component {
       this.setState({
         items: newState
       });
-      });
-
-      // keeps user signed in by checking user's state
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          this.setState({ user });
-        } 
-      });
+    });
   }
 
   // removes item from database triggered by the onClick button
@@ -102,7 +73,11 @@ class App extends Component {
         <header>
             <div className='wrapper'>
               <h1>Fun Food Friends</h1>
-              
+              {this.state.user ?
+                <button onClick={this.logout}>Log Out</button>                
+                :
+                <button onClick={this.login}>Log In</button>              
+              }
             </div>
         </header>
         <div className='container'>
@@ -115,12 +90,6 @@ class App extends Component {
           </section>
           <section className='display-item'>
             <div className='wrapper'>
-              <h1>Fun Food Friends</h1>
-              {this.state.user ?
-                <button onClick={this.logout}>Log Out</button>                
-                :
-                <button onClick={this.login}>Log In</button>              
-              }
               <ul>
                 {/* this displays the items and names from the database */}
                  {this.state.items.map((item) => {
