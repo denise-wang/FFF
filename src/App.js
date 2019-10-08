@@ -80,7 +80,14 @@ class App extends Component {
       this.setState({
         items: newState
       });
-    });
+      });
+
+      // keeps user signed in by checking user's state
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          this.setState({ user });
+        } 
+      });
   }
 
   // removes item from database triggered by the onClick button
