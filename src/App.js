@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import firebase from './firebase.js';
+import firebase, { auth, provider } from './firebase.js';
 
 class App extends Component {
 
@@ -9,10 +9,13 @@ class App extends Component {
     this.state = {
       currentItem: '',
       username: '',
-      items: []
+      items: [],
+      user: null // <-- add this line
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this); 
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
     //binds functions to constructor 
   }
 
@@ -21,6 +24,25 @@ class App extends Component {
     this.setState({
       [e.target.name]: e.target.value
     });
+  }
+
+  login() {
+    auth.signInWithPopup(provider) 
+      .then((result) => {
+        const user = result.user;
+        this.setState({
+          user
+        });
+      });
+  }
+
+  logout() {
+    auth.signOut()
+      .then(() => {
+        this.setState({
+          user: null
+        });
+      });
   }
 
   // triggered by onSubmit and pushes updated state to the database
@@ -86,6 +108,12 @@ class App extends Component {
           </section>
           <section className='display-item'>
             <div className='wrapper'>
+              <h1>Fun Food Friends</h1>
+              {this.state.user ?
+                <button onClick={this.logout}>Log Out</button>                
+                :
+                <button onClick={this.login}>Log In</button>              
+              }
               <ul>
                 {/* this displays the items and names from the database */}
                  {this.state.items.map((item) => {
