@@ -113,13 +113,7 @@ class App extends Component {
           <div className='user-profile'>
             <img src={this.state.user.photoURL} />
           </div>
-        </div>
-        :
-        <div className='wrapper'>
-          <p>You must be logged in to see the potluck list and submit to it.</p>
-        </div>
-        }
-        <div className='container'>
+          <div className='container'>
           <section className='add-item'>
             <form onSubmit={this.handleSubmit}>
               <input type="text" name="username" placeholder="What's your name?" value={this.state.user.displayName || this.state.user.email} />
@@ -145,6 +139,12 @@ class App extends Component {
             </div>
           </section>
         </div>
+        </div>
+        :
+        <div className='wrapper'>
+          <p>You must be logged in to see the potluck list and submit to it.</p>
+        </div>
+        }
       </div>
     );
   }
